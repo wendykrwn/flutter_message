@@ -28,6 +28,8 @@ class _ListPersonneState extends State<ListPersonne> {
                 padding: const EdgeInsets.all(10),
                 itemBuilder: (context, index) {
                   Utilisateur otherUser = Utilisateur(documents[index]);
+                  print("otherUser");
+                  print(myUser.email);
                   if (otherUser.uid == myUser.uid) {
                     return Container();
                   } else {
@@ -52,6 +54,8 @@ class _ListPersonneState extends State<ListPersonne> {
                                 : Colors.amber,
                           ),
                           onPressed: () {
+                            print(myUser.uid);
+                            print(myUser.favoris);
                             setState(() {
                               myUser.favoris.add(otherUser.uid);
 

@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
 import 'package:my_app/controller/globale.dart';
+import 'package:my_app/model/utilisateur.dart';
 import 'package:my_app/view/dash_board.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lottie/lottie.dart';
@@ -18,9 +20,77 @@ class _LoginPageState extends State<LoginPage> {
   List<bool> selection = [true, false];
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool isLogin = true;
+
+  Future<void> signInWithEmailAndPassword() async {
+    try {
+      Utilisateur userConnected =
+          await FirebaseManager().connect(email.text, password.text);
+      if (!mounted) return;
+      setState(() {
+        myUser = userConnected;
+      });
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return const DashBoard();
+      }));
+    } on FirebaseAuthException catch (e) {
+      popError(errorMessage: e.message);
+    }
+  }
+
+  Future<void> createUserWithEmailAndPassword() async {
+    try {
+      Utilisateur userConnected =
+          await FirebaseManager().inscription(email.text, password.text);
+
+      if (!mounted) return;
+      setState(() {
+        myUser = userConnected;
+      });
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return const DashBoard();
+      }));
+    } on FirebaseAuthException catch (e) {
+      popError(errorMessage: e.message);
+    }
+  }
+
+  Widget _entryField(
+      TextEditingController controller, String hintText, Icon icon,
+      {bool textObscured = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: textObscured,
+      decoration: InputDecoration(
+          prefixIcon: icon,
+          hintText: hintText,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
+    );
+  }
+
+  Widget _submitButton() {
+    return ElevatedButton(
+        onPressed: isLogin
+            ? signInWithEmailAndPassword
+            : createUserWithEmailAndPassword,
+        child: Text(isLogin ? "Connexion" : "Inscription"));
+  }
+
+  Widget _loginOrRegistrationButton() {
+    return TextButton(
+      onPressed: () {
+        setState(() {
+          isLogin = !isLogin;
+        });
+      },
+      child: Text(isLogin ? "S'inscrire ?" : "Se connecter ?"),
+    );
+  }
 
   //méhode interne
-  popError() {
+  popError({String? errorMessage}) {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -28,7 +98,10 @@ class _LoginPageState extends State<LoginPage> {
           if (defaultTargetPlatform == TargetPlatform.iOS) {
             return CupertinoAlertDialog(
               title: const Text("Erreur"),
-              content: Lottie.asset("assets/error.json"),
+              content: Column(children: [
+                Lottie.asset("assets/error.json"),
+                Text(errorMessage ?? 'Une erreur est survenue'),
+              ]),
               actions: [
                 TextButton(
                     onPressed: () {
@@ -40,7 +113,10 @@ class _LoginPageState extends State<LoginPage> {
           } else {
             return AlertDialog(
               title: const Text("Erreur"),
-              content: Lottie.asset("assets/error.json"),
+              content: Column(children: [
+                Lottie.asset("assets/error.json"),
+                Text(errorMessage ?? 'Une erreur est survenue'),
+              ]),
               actions: [
                 TextButton(
                     onPressed: () {
@@ -56,11 +132,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: bodyPage(),
-      ),
-    );
+        body: Container(
+      height: double.infinity,
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      child: bodyPage(),
+    ));
   }
 
   Widget bodyPage() {
@@ -76,7 +153,8 @@ class _LoginPageState extends State<LoginPage> {
                 //color: Colors.amber,
                 borderRadius: BorderRadius.circular(20),
                 image: const DecorationImage(
-                    image: AssetImage("assets/zelda.png"), fit: BoxFit.fill)),
+                    image: AssetImage("assets/messenger.png"),
+                    fit: BoxFit.contain)),
           ),
           const SizedBox(height: 10),
 
@@ -84,90 +162,32 @@ class _LoginPageState extends State<LoginPage> {
 
           ToggleButtons(
               onPressed: (value) {
-                if (value == 0) {
+                if (isLogin) {
                   setState(() {
-                    selection[0] = true;
-                    selection[1] = false;
+                    isLogin = false;
                   });
                 } else {
                   setState(() {
-                    selection[0] = false;
-                    selection[1] = true;
+                    isLogin = true;
                   });
                 }
               },
-              isSelected: selection,
+              isSelected: [isLogin, !isLogin],
               children: const [Text("Connexion"), Text("Inscription")]),
 
           const SizedBox(height: 10),
 
           //adresse mail
-          TextField(
-            controller: email,
-            decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.mail),
-                hintText: "Entrer votre adresse mail",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20))),
-          ),
-
+          _entryField(
+              email, "Entrer votre adresse mail", const Icon(Icons.email)),
           const SizedBox(height: 10),
-
           //password
-          TextField(
-            controller: password,
-            obscureText: true,
-            decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock),
-                hintText: "Entrer votre mot de passe",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20))),
-          ),
-
+          _entryField(
+              password, 'Entrer votre mot de passe', const Icon(Icons.lock),
+              textObscured: true),
           const SizedBox(height: 10),
-
           //boutton
-
-          ElevatedButton(
-              onPressed: () {
-                //connexion
-                if (selection[0]) {
-                  FirebaseManager()
-                      .connect(email.text, password.text)
-                      .then((value) {
-                    setState(() {
-                      myUser = value;
-                    });
-
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const DashBoard();
-                    }));
-                  }).catchError((onError) {
-                    //afficher un pop erreur de mot de passe
-                    popError();
-                  });
-                } else {
-                  FirebaseManager()
-                      .inscription(email.text, password.text)
-                      .then((value) {
-                    setState(() {
-                      myUser = value;
-                    });
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const DashBoard();
-                    }));
-                  }).catchError((onError) {
-                    popError();
-
-                    //popUp
-                  });
-                }
-
-                //inscription
-              },
-              child: Text(selection[0] ? "Connexion" : "Inscription"))
+          _submitButton(),
         ],
       ),
     );

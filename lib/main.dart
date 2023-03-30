@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/permission_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:my_app/view/dash_board.dart';
 import 'package:my_app/widget_tree.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  PermissionHandler().start();
+  // PermissionHandler().start();
   runApp(const MyApp());
 }
 
