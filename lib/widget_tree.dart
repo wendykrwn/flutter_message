@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/auth.dart';
+import 'package:my_app/controller/firebase_manager.dart';
 import 'package:my_app/pages/home_page.dart';
 import 'package:my_app/pages/login_register_page.dart';
 
@@ -14,7 +14,7 @@ class _WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Auth().authStateChanges,
+      stream: FirebaseManager().authStateChanges,
       builder: (context, snapShot) {
         if (snapShot.hasData) {
           return HomePage();
