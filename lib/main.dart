@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/permission_handler.dart';
-import 'package:my_app/view/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:my_app/view/dash_board.dart';
+import 'package:my_app/widget_tree.dart';
 
 void main() async {
-  runApp(const MyApp());
-  PermissionHandler().start();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  PermissionHandler().start();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: const LoginPage());
+        home: const WidgetTree() 
+      );
   }
 }

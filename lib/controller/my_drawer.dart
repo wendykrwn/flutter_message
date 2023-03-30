@@ -47,7 +47,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   onPressed: () {
                     //enregistrer dans la base de donnée
                     FirebaseManager()
-                        .Upload(myUser.uid, nameImage!, dataImage!)
+                        .upload(myUser.uid, nameImage!, dataImage!)
                         .then((value) {
                       setState(() {
                         urlImage = value;
@@ -87,6 +87,7 @@ class _MyDrawerState extends State<MyDrawer> {
         TextButton(
             onPressed: () {
               //déconnexion
+              FirebaseManager().signOut();
             },
             child: const Text("Déconnexion")),
       ],

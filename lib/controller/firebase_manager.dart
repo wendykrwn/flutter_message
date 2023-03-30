@@ -40,13 +40,13 @@ class FirebaseManager {
     if (uid == null) {
       return Future.error(("problème de connexion"));
     } else {
-      return getUser(uid!);
+      return getUser(uid);
     }
   }
 
 
   //creer un utilisateur
-  Future<Utilisateur> Inscription(
+  Future<Utilisateur> inscription(
       String email, String password) async {
     UserCredential authResult = await auth.createUserWithEmailAndPassword(
         email: email, password: password);
@@ -55,8 +55,8 @@ class FirebaseManager {
       return Future.error(("error"));
     } else {
       Map<String, dynamic> map = {"EMAIL": email, "FAVORIS": []};
-      addUser(uid!, map);
-      return getUser(uid!);
+      addUser(uid, map);
+      return getUser(uid);
     }
   }
 
@@ -70,7 +70,7 @@ class FirebaseManager {
   }
 
   // Upload de l'image
-  Future<String> Upload(
+  Future<String> upload(
       String destination, String nameImage, Uint8List bytes) async {
     String url = "";
     TaskSnapshot snapshot =

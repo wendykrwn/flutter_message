@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController password = TextEditingController();
 
   //méhode interne
-  PopError() {
+  popError() {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                 }
               },
               isSelected: selection,
-              children: [Text("Connexion"), Text("Inscription")]),
+              children: const [Text("Connexion"), Text("Inscription")]),
 
           const SizedBox(height: 10),
 
@@ -145,11 +145,11 @@ class _LoginPageState extends State<LoginPage> {
                     }));
                   }).catchError((onError) {
                     //afficher un pop erreur de mot de passe
-                    PopError();
+                    popError();
                   });
                 } else {
                   FirebaseManager()
-                      .Inscription(email.text, password.text)
+                      .inscription(email.text, password.text)
                       .then((value) {
                     setState(() {
                       myUser = value;
@@ -159,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                       return const DashBoard();
                     }));
                   }).catchError((onError) {
-                    PopError();
+                    popError();
 
                     //popUp
                   });
