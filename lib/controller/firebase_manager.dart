@@ -69,13 +69,13 @@ class FirebaseManager {
     cloudUsers.doc(uid).update(map);
   }
 
-  // Upload de l'image
+  // Upload d'une image sur Firebase Storage
   Future<String> upload(
       String destination, String nameImage, Uint8List bytes) async {
-    String url = "";
+    String imagePath = '$destination/$nameImage';
     TaskSnapshot snapshot =
-        await storage.ref("$destination/$nameImage").putData(bytes);
-    url = await snapshot.ref.getDownloadURL();
-    return url;
+        await storage.ref().child(imagePath).putData(bytes);
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
   }
 }
