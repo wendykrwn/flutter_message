@@ -14,7 +14,7 @@ class ListFavoris extends StatefulWidget {
 
 class _ListFavorisState extends State<ListFavoris> {
   //
-  
+
   @override
   Widget build(BuildContext context) {
     Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
@@ -22,15 +22,37 @@ class _ListFavorisState extends State<ListFavoris> {
         itemCount: myUser.favoris.length,
         gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder: (context, index) {
-          FirebaseManager().getUser(myUser.favoris[index]).then((value) {
-            Utilisateur otherUser = value;
-            return Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(otherUser.avatar ?? defaultImage))),
-            );
-          });
-        });
+       itemBuilder: (context, index) {
+  return FutureBuilder<Utilisateur>(
+    future: FirebaseManager().getUser(myUser.favoris[index]),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return const Text('Erreur de chargement des données');
+      } else if (!snapshot.hasData) {
+        return const Text('Pas de données');
+      } else {
+        Utilisateur otherUser = snapshot.data!;
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(otherUser.avatar ?? defaultImage),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(child: Text(otherUser.email)),
+        );
+      }
+    },
+  );
+},
+
+
+
+
+
+
+      );
   }
 }
