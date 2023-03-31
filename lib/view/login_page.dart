@@ -2,9 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
+import 'package:my_app/model/user_provider.dart';
+import 'package:my_app/model/utilisateur.dart';
 import 'package:my_app/view/dash_board.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,10 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> signInWithEmailAndPassword() async {
     try {
       await FirebaseManager().connect(email.text, password.text);
-      if (!mounted) return;
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return const DashBoard();
-      }));
     } on FirebaseAuthException catch (e) {
       popError(errorMessage: e.message);
     }
@@ -35,10 +34,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> createUserWithEmailAndPassword() async {
     try {
       await FirebaseManager().inscription(email.text, password.text);
-      if (!mounted) return;
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return const DashBoard();
-      }));
     } on FirebaseAuthException catch (e) {
       popError(errorMessage: e.message);
     }
@@ -57,23 +52,24 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _submitButton() {
+  Widget _submitButton(BuildContext context) {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return ElevatedButton(
-        onPressed: isLogin
-            ? signInWithEmailAndPassword
-            : createUserWithEmailAndPassword,
-        child: Text(isLogin ? "Connexion" : "Inscription"));
-  }
+        onPressed: () async {
+          if (isLogin) {
+            await signInWithEmailAndPassword();
+          } else {
+            await createUserWithEmailAndPassword();
+          }
+          await userProvider.getCurrentUser();
 
-  Widget _loginOrRegistrationButton() {
-    return TextButton(
-      onPressed: () {
-        setState(() {
-          isLogin = !isLogin;
-        });
-      },
-      child: Text(isLogin ? "S'inscrire ?" : "Se connecter ?"),
-    );
+          if (!mounted) return;
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const DashBoard();
+          }));
+        },
+        child: Text(isLogin ? "Connexion" : "Inscription"));
   }
 
   //méhode interne
@@ -149,15 +145,9 @@ class _LoginPageState extends State<LoginPage> {
 
           ToggleButtons(
               onPressed: (value) {
-                if (isLogin) {
-                  setState(() {
-                    isLogin = false;
-                  });
-                } else {
-                  setState(() {
-                    isLogin = true;
-                  });
-                }
+                setState(() {
+                  isLogin = value == 0;
+                });
               },
               isSelected: [isLogin, !isLogin],
               children: const [Text("Connexion"), Text("Inscription")]),
@@ -174,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
               textObscured: true),
           const SizedBox(height: 10),
           //boutton
-          _submitButton(),
+          _submitButton(context),
         ],
       ),
     );

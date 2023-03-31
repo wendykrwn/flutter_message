@@ -15,7 +15,6 @@ class ListPersonne extends StatefulWidget {
 }
 
 class _ListPersonneState extends State<ListPersonne> {
-  final User? user = FirebaseManager().currentUser;
 
   @override
   Widget build(BuildContext context) {
