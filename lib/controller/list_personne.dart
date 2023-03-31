@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
 import 'package:my_app/controller/globale.dart';
@@ -15,7 +14,6 @@ class ListPersonne extends StatefulWidget {
 }
 
 class _ListPersonneState extends State<ListPersonne> {
-
   @override
   Widget build(BuildContext context) {
     Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
@@ -39,7 +37,7 @@ class _ListPersonneState extends State<ListPersonne> {
                   } else {
                     return Card(
                       elevation: 5.0,
-                      color: Colors.grey,
+                      color: Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
                       child: ListTile(
@@ -58,11 +56,12 @@ class _ListPersonneState extends State<ListPersonne> {
                                 : Colors.amber,
                           ),
                           onPressed: () {
-                            print(myUser.uid);
-                            print(myUser.favoris);
                             setState(() {
-                              myUser.favoris.add(otherUser.uid);
-
+                              if (!myUser.favoris.contains(otherUser.uid)) {
+                                myUser.favoris.add(otherUser.uid);
+                              } else {
+                                myUser.favoris.remove(otherUser.uid);
+                              }
                               Map<String, dynamic> map = {
                                 "FAVORIS": myUser.favoris,
                               };
