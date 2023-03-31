@@ -25,22 +25,22 @@ class _ListMessagesState extends State<ListMessages> {
         stream: firebaseManager.getChats(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
+            
             return const Center(child: CircularProgressIndicator());
           }
 
           final chats = snapshot.data!.docs;
+          
 
           return ListView.builder(
             itemCount: chats.length,
             itemBuilder: (context, index) {
-            final Map<String, dynamic> chat =
+              final Map<String, dynamic> chat =
                   snapshot.data!.docs[index].data() as Map<String, dynamic>;
               
-
-              final otherUserId =
-                  chat['user1Id'] == firebaseManager.currentUser
-                      ? chat['user2Id']
-                      : chat['user1Id'];
+              final otherUserId = chat['user1Id'] == firebaseManager.currentUser
+                  ? chat['user2Id']
+                  : chat['user1Id'];
 
               return FutureBuilder<DocumentSnapshot>(
                 future: firebaseManager.getUserDocument(otherUserId),
@@ -53,26 +53,31 @@ class _ListMessagesState extends State<ListMessages> {
                       snapshot.data!.data() as Map<String, dynamic>?;
 
                   final lastMessage = chat['lastMessage'];
-
+                  print({"otherUser": otherUser});
                   return ListTile(
                     leading: CircleAvatar(
-                      child: Text(otherUser!['name'][0]),
+                      child: Text(otherUser!['email'][0]),
                     ),
-                    title: Text(otherUser['name']),
-                    subtitle: Text(lastMessage['text']),
-                    //Accéder à la conversation
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => ChatView(
-                    //         chatId: chats[index].id,
-                    //         recipientName: otherUser['name'],
-                    //       ),
-                    //     ),
-                    //   );
-                    // },
                   );
+                  // return ListTile(
+                  //   leading: CircleAvatar(
+                  //     child: Text(otherUser!['name'][0]),
+                  //   ),
+                  //   title: Text(otherUser['name']),
+                  //   subtitle: Text(lastMessage['text']),
+                  //   //Accéder à la conversation
+                  //   // onTap: () {
+                  //   //   Navigator.push(
+                  //   //     context,
+                  //   //     MaterialPageRoute(
+                  //   //       builder: (context) => ChatView(
+                  //   //         chatId: chats[index].id,
+                  //   //         recipientName: otherUser['name'],
+                  //   //       ),
+                  //   //     ),
+                  //   //   );
+                  //   // },
+                  // );
                 },
               );
             },

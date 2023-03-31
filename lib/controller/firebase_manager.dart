@@ -9,7 +9,7 @@ class FirebaseManager {
   //attributs
   final FirebaseAuth auth = FirebaseAuth.instance;
   final storage = FirebaseStorage.instance;
-  final cloudMessages = FirebaseFirestore.instance.collection("MESSAGES");
+  final cloudChats = FirebaseFirestore.instance.collection("CHATS");
   final cloudUsers = FirebaseFirestore.instance.collection("UTILISATEURS");
 
   User? get currentUser => auth.currentUser;
@@ -19,6 +19,11 @@ class FirebaseManager {
   //ajoouter un utlisateur
   addUser(String uid, Map<String, dynamic> map) {
     cloudUsers.doc(uid).set(map);
+  }
+
+  Future<Utilisateur> getCurrentUser() async {
+    DocumentSnapshot snapshot = await cloudUsers.doc(currentUser!.uid).get();
+    return Utilisateur(snapshot);
   }
 
   //récuperer un utilisateur
@@ -60,6 +65,7 @@ class FirebaseManager {
   Future<void> signOut() async {
     await auth.signOut();
   }
+  
 
   // mise à jour d'un utlisateur
   updateUser(String uid, Map<String, dynamic> map) {
@@ -77,7 +83,7 @@ class FirebaseManager {
 
   // Creer une conversation
   Future<String> createChat(String user1Id, String user2Id) async {
-    final DocumentReference chatDocRef = cloudMessages.doc('$user1Id-$user2Id');
+    final DocumentReference chatDocRef = cloudChats.doc('$user1Id-$user2Id');
     final Map<String, dynamic> chatData = {
       'user1Id': user1Id,
       'user2Id': user2Id,
@@ -86,23 +92,34 @@ class FirebaseManager {
     return chatDocRef.id;
   }
 
+
+  Future<String?> getChatId(String user1Id, String user2Id) async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('CHAT_LIST')
+        .where('UTILISATEURS', arrayContainsAny: [user1Id, user2Id]).get();
+
+    if (snapshot.docs.isNotEmpty) {
+      return snapshot.docs.first.id;
+    } else {
+      // Pas de conversation existante pour ces deux utilisateurs
+      return null;
+    }
+  }
+
+
   // Ajouter un message dans une conversation
 
   Future<void> addMessage(String chatId, String text, String senderId) async {
-    final Timestamp timestamp = Timestamp.now();
-
-    await cloudMessages.doc(chatId).collection('MESSAGES').add({
+    final DocumentReference messagesDocRef =
+        cloudChats.doc(chatId).collection('MESSAGES').doc();
+    final Map<String, dynamic> messageData = {
       'text': text,
       'senderId': senderId,
-      'timestamp': timestamp,
-    });
-
-    await cloudMessages.doc(chatId).update({
-      'lastMessageText': text,
-      'lastMessageSenderId': senderId,
-      'lastMessageTimestamp': timestamp,
-    });
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+    await messagesDocRef.set(messageData);
   }
+
 
   //Recuperes une liste de conversation de l'utilisateur actuel
   Stream<QuerySnapshot> getChats() {
@@ -110,7 +127,7 @@ class FirebaseManager {
       return const Stream.empty();
     }
     else{
-      return cloudMessages
+      return cloudChats
           .where('user1Id', isEqualTo: currentUser?.uid)
           .orderBy('lastMessageTimestamp', descending: true)
           .snapshots();
@@ -119,7 +136,7 @@ class FirebaseManager {
 
   //Recuperes une liste de conversation d'un chat specifique
   Stream<QuerySnapshot> getMessages(String chatId) {
-    return cloudMessages
+    return cloudChats
         .doc(chatId)
         .collection('messages')
         .orderBy('timestamp', descending: true)
