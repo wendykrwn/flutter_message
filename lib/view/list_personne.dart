@@ -16,16 +16,24 @@ class ListPersonne extends StatefulWidget {
 }
 
 class _ListPersonneState extends State<ListPersonne> {
+  final FirebaseManager firebaseManager = FirebaseManager();
+
   void startNewConversation(String otherUserId) async {
-    String currentUserId = FirebaseManager().currentUser!.uid;
+    String currentUserId = firebaseManager.currentUser!.uid;
     // Vérifie s'il y a déjà une conversation entre ces deux utilisateurs
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('CHATS')
         .where('user1Id', isEqualTo: currentUserId)
         .where('user2Id', isEqualTo: otherUserId)
-        .limit(1)
         .get();
 
+    if (querySnapshot.docs.isEmpty) {
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('CHATS')
+          .where('user1Id', isEqualTo: otherUserId)
+          .where('user2Id', isEqualTo: currentUserId)
+          .get();
+    }
     if (querySnapshot.docs.isNotEmpty) {
       // Si une conversation existe déjà, ouvrez la vue de discussion existante
       String chatId = querySnapshot.docs[0].id;
@@ -41,23 +49,23 @@ class _ListPersonneState extends State<ListPersonne> {
         ),
       );
     } else {
-        String chatId =
-            await FirebaseManager().createChat(currentUserId, otherUserId);
+      String chatId =
+          await FirebaseManager().createChat(currentUserId, otherUserId);
 
-        // Sinon, créez une nouvelle conversation
-        await FirebaseManager().addMessage(chatId, "", currentUserId);
+      // Sinon, créez une nouvelle conversation
+      await FirebaseManager().addMessage(chatId, "", currentUserId);
 
-        if (!mounted) return;
+      if (!mounted) return;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatView(
-              chatId: chatId,
-              recipientName: 'recipientName : $otherUserId',
-            ),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatView(
+            chatId: chatId,
+            recipientName: 'recipientName : $otherUserId',
           ),
-        );
+        ),
+      );
     }
   }
 

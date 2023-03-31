@@ -138,7 +138,7 @@ class FirebaseManager {
   Stream<QuerySnapshot> getMessages(String chatId) {
     return cloudChats
         .doc(chatId)
-        .collection('messages')
+        .collection('MESSAGES')
         .orderBy('timestamp', descending: true)
         .snapshots();
   }
