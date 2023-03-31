@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../auth.dart';
+import 'package:my_app/controller/firebase_manager.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,8 +18,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> signInWithEmailAndPassword() async {
     try {
-      await Auth().signInWithEmailAndPassword(
-          email: _controllEmail.text, password: _controllPassword.text);
+      await FirebaseManager().connect(
+           _controllEmail.text, _controllPassword.text);
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -29,8 +29,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> createUserWithEmailAndPassword() async {
     try {
-      await Auth().createUserWithEmailAndPassword(
-          email: _controllEmail.text, password: _controllPassword.text);
+      await FirebaseManager().inscription(
+           _controllEmail.text, _controllPassword.text);
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -91,8 +91,8 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _entryField('email', _controllEmail), 
-            _entryField('mot de passe', _controllPassword), 
+            _entryField('email', _controllEmail),
+            _entryField('mot de passe', _controllPassword),
             _errorMessage(),
             _submitButton(),
             _loginOrRegistrationButton()

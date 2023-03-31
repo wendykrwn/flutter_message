@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBjaaCrz9-JNrXBpEV6617gXCU8Kn7LxGA',
-    appId: '1:46885657826:android:0b92989a275ed07e3a92bb',
+    appId: '1:46885657826:android:8057cdaf682018273a92bb',
     messagingSenderId: '46885657826',
     projectId: 'appflutter-5c671',
     storageBucket: 'appflutter-5c671.appspot.com',
@@ -63,12 +63,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDIrwnDOxpxB61jw77LJtm_-GWwiHDxe28',
-    appId: '1:46885657826:ios:7c8c8d611d066a6f3a92bb',
+    appId: '1:46885657826:ios:d3c21e3aea2fb1bc3a92bb',
     messagingSenderId: '46885657826',
     projectId: 'appflutter-5c671',
     storageBucket: 'appflutter-5c671.appspot.com',
-    iosClientId: '46885657826-73r4vb2vush1a4su0vrlj0i94et4hs9h.apps.googleusercontent.com',
-    iosBundleId: 'com.example.myApp',
+    iosClientId: '46885657826-il7p8nsnoddd8l0dib97cbdefqr66mvc.apps.googleusercontent.com',
+    iosBundleId: 'com.example.myflutterapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
