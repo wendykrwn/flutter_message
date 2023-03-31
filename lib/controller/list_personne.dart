@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
 import 'package:my_app/controller/globale.dart';
+import 'package:my_app/model/user_provider.dart';
 import 'package:my_app/model/utilisateur.dart';
+import 'package:provider/provider.dart';
 
 class ListPersonne extends StatefulWidget {
   const ListPersonne({Key? key}) : super(key: key);
@@ -12,8 +15,12 @@ class ListPersonne extends StatefulWidget {
 }
 
 class _ListPersonneState extends State<ListPersonne> {
+  final User? user = FirebaseManager().currentUser;
+
   @override
   Widget build(BuildContext context) {
+    Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
+
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseManager().cloudUsers.snapshots(),
         builder: (context, snap) {
@@ -28,8 +35,6 @@ class _ListPersonneState extends State<ListPersonne> {
                 padding: const EdgeInsets.all(10),
                 itemBuilder: (context, index) {
                   Utilisateur otherUser = Utilisateur(documents[index]);
-                  print("otherUser");
-                  print(myUser.email);
                   if (otherUser.uid == myUser.uid) {
                     return Container();
                   } else {

@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
-import 'package:my_app/controller/globale.dart';
-import 'package:my_app/model/utilisateur.dart';
 import 'package:my_app/view/dash_board.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lottie/lottie.dart';
@@ -24,13 +22,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> signInWithEmailAndPassword() async {
     try {
-      Utilisateur userConnected =
-          await FirebaseManager().connect(email.text, password.text);
+      await FirebaseManager().connect(email.text, password.text);
       if (!mounted) return;
-      setState(() {
-        myUser = userConnected;
-      });
-
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return const DashBoard();
       }));
@@ -41,14 +34,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> createUserWithEmailAndPassword() async {
     try {
-      Utilisateur userConnected =
-          await FirebaseManager().inscription(email.text, password.text);
-
+      await FirebaseManager().inscription(email.text, password.text);
       if (!mounted) return;
-      setState(() {
-        myUser = userConnected;
-      });
-
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return const DashBoard();
       }));

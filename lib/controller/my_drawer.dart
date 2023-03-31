@@ -2,6 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
+import 'package:my_app/model/user_provider.dart';
+import 'package:my_app/model/utilisateur.dart';
+import 'package:provider/provider.dart';
 import 'globale.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -34,6 +37,8 @@ class _MyDrawerState extends State<MyDrawer> {
         barrierDismissible: false,
         context: context,
         builder: (context) {
+          Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
+
           return AlertDialog(
             title: Text(nameImage!),
             content: Image.memory(dataImage!),
@@ -67,6 +72,8 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
+
     return SafeArea(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,

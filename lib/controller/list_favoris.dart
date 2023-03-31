@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/model/user_provider.dart';
 import 'package:my_app/model/utilisateur.dart';
 import 'package:my_app/controller/firebase_manager.dart';
 import 'package:my_app/controller/globale.dart';
+import 'package:provider/provider.dart';
 
 class ListFavoris extends StatefulWidget {
   const ListFavoris({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class _ListFavorisState extends State<ListFavoris> {
   
   @override
   Widget build(BuildContext context) {
+    Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
     return GridView.builder(
         itemCount: myUser.favoris.length,
         gridDelegate:
