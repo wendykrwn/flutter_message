@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/controller/list_favoris.dart';
-import 'package:my_app/controller/list_personne.dart';
+import 'package:my_app/view/list_favoris.dart';
+import 'package:my_app/view/list_message_page.dart';
+import 'package:my_app/view/list_personne.dart';
 import 'package:my_app/controller/my_drawer.dart';
 
 class DashBoard extends StatefulWidget {
@@ -35,6 +36,7 @@ class _DashBoardState extends State<DashBoard> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: "Listes"),
+          BottomNavigationBarItem(icon: Icon(Icons.message), label: "Messages"),
           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favoris"),
         ],
       ),
@@ -46,7 +48,11 @@ class _DashBoardState extends State<DashBoard> {
       case 0:
         return const ListPersonne();
       case 1:
+        return const ListMessages();
+      case 2:
         return const ListFavoris();
+      case 4:
+        return const Text("Un chat avec un user");
       default:
         return const Text("Mauvaise page");
     }
