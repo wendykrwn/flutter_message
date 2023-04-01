@@ -52,8 +52,8 @@ class _ListMessagesState extends State<ListMessages> {
                   final Map<String, dynamic>? otherUser =
                       snapshot.data!.data() as Map<String, dynamic>?;
 
-                  final lastMessage = chat['lastMessage'];
-                  print({"otherUser": otherUser});
+                  // final lastMessage = chat['lastMessage'];
+                 
                   return ListTile(
                     leading: CircleAvatar(
                       child: Text(otherUser!['email'][0]),

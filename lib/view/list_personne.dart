@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
 import 'package:my_app/controller/globale.dart';
@@ -92,7 +91,7 @@ class _ListPersonneState extends State<ListPersonne> {
                   } else {
                     return Card(
                       elevation: 5.0,
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
                       child: ListTile(
