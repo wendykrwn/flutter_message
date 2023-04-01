@@ -38,13 +38,15 @@ class _ChatViewState extends State<ChatView> {
 
                 final messages = snapshot.data!.docs;
 
-
                 return ListView.builder(
                   reverse: true,
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message =
                         messages[index].data() as Map<String, dynamic>;
+
+                    print("message : ${message}");
+                    final Timestamp messageTimestamp = message['timestamp'];
                     final currentUserUid = firebaseManager.currentUser!.uid;
                     final isCurrentUser = message['senderId'] == currentUserUid;
                     return Container(
@@ -80,7 +82,7 @@ class _ChatViewState extends State<ChatView> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                timestampToHumanReadable(message['timestamp']),
+                                timestampToHumanReadable(messageTimestamp),
                                 style: const TextStyle(
                                     fontSize: 10,
                                     color: Color.fromARGB(255, 93, 93, 93)),

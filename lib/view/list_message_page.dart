@@ -28,11 +28,7 @@ class _ListMessagesState extends State<ListMessages> {
           }
 
           print({"snap": snapshot});
-          
           final chats = snapshot.data!.docs;
-          
-          
-
 
 
           return ListView.builder(
@@ -59,8 +55,8 @@ class _ListMessagesState extends State<ListMessages> {
                   print({'otherUser': otherUser});
 
 
-                  final lastMessage = chat['lastMessageText'] ?? "";
-                  final lastMessageTimestamp = chat['lastMessageTimestamp'] ?? "";
+                  final lastMessage = chat['lastMessageText'];
+                  final lastMessageTimestamp = chat['lastMessageTimestamp'];
 
                   return  ListTile(
                     leading: CircleAvatar(
