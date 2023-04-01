@@ -18,6 +18,8 @@ class _ListPersonneState extends State<ListPersonne> {
   final FirebaseManager firebaseManager = FirebaseManager();
 
   void startNewConversation(String otherUserId) async {
+    Utilisateur recipient = await firebaseManager.getUser(otherUserId);
+
     String currentUserId = firebaseManager.currentUser!.uid;
     // Vérifie s'il y a déjà une conversation entre ces deux utilisateurs
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -43,7 +45,7 @@ class _ListPersonneState extends State<ListPersonne> {
         MaterialPageRoute(
           builder: (context) => ChatView(
             chatId: chatId,
-            recipientName: 'recipientName : $otherUserId',
+            recipientName: recipient.email,
           ),
         ),
       );
@@ -61,7 +63,7 @@ class _ListPersonneState extends State<ListPersonne> {
         MaterialPageRoute(
           builder: (context) => ChatView(
             chatId: chatId,
-            recipientName: 'recipientName : $otherUserId',
+            recipientName: recipient.email,
           ),
         ),
       );

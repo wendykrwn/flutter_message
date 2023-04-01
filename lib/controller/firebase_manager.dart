@@ -122,7 +122,7 @@ Future<Utilisateur> inscription(String email, String password) async {
     final Map<String, dynamic> messageData = {
       'text': text,
       'senderId': senderId,
-      'timestamp': FieldValue.serverTimestamp(),
+      'timestamp': Timestamp.now().millisecondsSinceEpoch,
     };
     await messagesDocRef.set(messageData);
   }
