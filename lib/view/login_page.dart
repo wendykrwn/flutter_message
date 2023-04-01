@@ -48,25 +48,29 @@ class _LoginPageState extends State<LoginPage> {
       String errorMessage = '';
       switch (e.code) {
         case 'invalid-email':
-          errorMessage = 'L\'adresse email est invalide.';
+          errorMessage =
+              "Votre adresse email n'est pas reconnue dans notre système interstellaire, veuillez réessayer avec une adresse valide.";
           break;
         case 'email-already-in-use':
-          errorMessage = 'L\'adresse email est déjà utilisée.';
+          errorMessage =
+              "Cette adresse email est déjà occupée par une autre entité interstellaire.";
           break;
         case 'weak-password':
-          errorMessage = 'Le mot de passe est trop faible.';
+          errorMessage =
+              'Désolé, votre mot de passe est trop faible pour affronter les attaques des extraterrestres, il faut au moins 6 caractères pour le renforcer.';
           break;
         case 'operation-not-allowed':
           errorMessage =
               'L\'inscription par e-mail et mot de passe n\'est pas autorisée pour le moment.';
           break;
         default:
-          errorMessage = 'Une erreur s\'est produite lors de l\'inscription.';
+          errorMessage =
+              "Oups, quelque chose s'est mal passé lors de votre inscription : c'est l'inconvénient d'explorer de nouveaux horizons";
       }
       popError(errorMessage: errorMessage);
     } catch (e) {
       popError(
-          errorMessage: 'Une erreur s\'est produite lors de l\'inscription.');
+          errorMessage: "Oups, quelque chose s'est mal passé lors de votre inscription : c'est l'inconvénient d'explorer de nouveaux horizons");
     }
   }
 
@@ -95,7 +99,8 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: Colors.blue, //couleur du texte
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.blue, //couleur du texte
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8), //bordure arrondie
         ),
@@ -103,7 +108,10 @@ class _LoginPageState extends State<LoginPage> {
         minimumSize: const Size(double.infinity,
             50), // utilisation de minimumSize pour définir la largeur minimale et la hauteur du bouton
       ),
-      child: Text(isLogin ? "SE CONNECTER" : "S'INSCRIRE", style: const TextStyle(fontSize: 18),),
+      child: Text(
+        isLogin ? "SE CONNECTER" : "S'INSCRIRE",
+        style: const TextStyle(fontSize: 18),
+      ),
     );
   }
 
@@ -115,8 +123,9 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context) {
           if (defaultTargetPlatform == TargetPlatform.iOS) {
             return CupertinoAlertDialog(
-              title: const Text("Erreur"),
+              title: const Text("Erreur de connexion intergalactique"),
               content: Column(children: [
+                const SizedBox(height: 10),
                 Lottie.asset("assets/error.json"),
                 Text(errorMessage ?? 'Une erreur est survenue'),
               ]),
@@ -130,8 +139,9 @@ class _LoginPageState extends State<LoginPage> {
             );
           } else {
             return AlertDialog(
-              title: const Text("Erreur"),
+              title: const Text("Erreur de connexion intergalactique"),
               content: Column(children: [
+                const SizedBox(height: 10),
                 Lottie.asset("assets/error.json"),
                 Text(errorMessage ?? 'Une erreur est survenue'),
               ]),
@@ -180,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
             width: 250,
             height: 150,
             decoration: const BoxDecoration(
-                image:  DecorationImage(
+                image: DecorationImage(
                     image: AssetImage("assets/vaisseau.png"),
                     fit: BoxFit.fitWidth)),
           ),
@@ -204,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
               });
             },
             isSelected: [isLogin, !isLogin],
-             children: const [
+            children: const [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text("Connexion"),
@@ -215,7 +225,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-
 
           const SizedBox(height: 30),
 
