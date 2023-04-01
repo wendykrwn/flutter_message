@@ -72,32 +72,44 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    Utilisateur myUser = Provider.of<UserProvider>(context).myUser;
+    return FutureBuilder<Utilisateur>(
+        future: FirebaseManager().getCurrentUser(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const SizedBox();
+          }
 
-    return SafeArea(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        InkWell(
-          onTap: () {
-            openImage();
-          },
-          child: CircleAvatar(
-            radius: 60,
-            backgroundImage: NetworkImage(myUser.avatar ?? defaultImage),
-          ),
-        ),
-        ListView(
-          shrinkWrap: true,
-          children: [Text(myUser.pseudo ?? ""), Text(myUser.email)],
-        ),
-        TextButton(
-            onPressed: () {
-              //déconnexion
-              FirebaseManager().signOut();
-            },
-            child: const Text("Déconnexion")),
-      ],
-    ));
+          Utilisateur? myUser = snapshot.data;
+
+          if (myUser == null) {
+            return const Text("Aucun utilisateur connecté");
+          }
+
+          return SafeArea(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () {
+                  openImage();
+                },
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(myUser.avatar ?? defaultImage),
+                ),
+              ),
+              ListView(
+                shrinkWrap: true,
+                children: [Text(myUser.pseudo ?? ""), Text(myUser.email)],
+              ),
+              TextButton(
+                  onPressed: () {
+                    //déconnexion
+                    FirebaseManager().signOut();
+                  },
+                  child: const Text("Déconnexion")),
+            ],
+          ));
+        });
   }
 }
