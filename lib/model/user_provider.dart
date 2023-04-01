@@ -11,8 +11,6 @@ class UserProvider with ChangeNotifier {
   void updateMyUser(User? user) async {
     if (user != null) {
       _myUser = await FirebaseManager().getUser(user.uid);
-      print("user exist");
-      print(user.email);
     }
     notifyListeners();
   }

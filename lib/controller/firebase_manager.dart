@@ -49,18 +49,25 @@ class FirebaseManager {
   }
 
   //creer un utilisateur
-  Future<Utilisateur> inscription(String email, String password) async {
-    UserCredential authResult = await auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    String? uid = authResult.user?.uid;
-    if (uid == null) {
-      return Future.error(("error"));
-    } else {
-      Map<String, dynamic> map = {"EMAIL": email, "FAVORIS": []};
-      addUser(uid, map);
-      return getUser(uid);
-    }
+Future<Utilisateur> inscription(String email, String password) async {
+    try {
+      UserCredential authResult = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
+      String? uid = authResult.user?.uid;
+      if (uid == null) {
+        return Future.error("Erreur lors de la création de l'utilisateur");
+      } else {
+        Map<String, dynamic> map = {"EMAIL": email, "FAVORIS": []};
+        await addUser(uid, map);
+        Utilisateur user = await getUser(uid);
+        return user;
+      }
+    } catch (e) {
+        return Future.error(e);
+      }
   }
+
 
   Future<void> signOut() async {
     await auth.signOut();
