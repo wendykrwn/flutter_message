@@ -2,10 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/controller/firebase_manager.dart';
-import 'package:my_app/controller/globale.dart';
+import 'package:my_app/model/user_provider.dart';
 import 'package:my_app/view/dash_board.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,10 +22,12 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController password = TextEditingController();
   bool isLogin = true;
 
-  Future<void> signInWithEmailAndPassword() async {
+  Future<void> signInWithEmailAndPassword(UserProvider userProvider) async {
     try {
-      myUser = await FirebaseManager().connect(email.text, password.text);
+      await FirebaseManager().connect(email.text, password.text);
 
+      await userProvider.getCurrentUser();
+      
       if (!mounted) return;
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return const DashBoard();
@@ -37,9 +40,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> createUserWithEmailAndPassword() async {
+  Future<void> createUserWithEmailAndPassword(UserProvider userProvider) async {
     try {
-      myUser = await FirebaseManager().inscription(email.text, password.text);
+      await FirebaseManager().inscription(email.text, password.text);
+      await userProvider.getCurrentUser();
       if (!mounted) return;
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return const DashBoard();
@@ -70,7 +74,8 @@ class _LoginPageState extends State<LoginPage> {
       popError(errorMessage: errorMessage);
     } catch (e) {
       popError(
-          errorMessage: "Oups, quelque chose s'est mal passé lors de votre inscription : c'est l'inconvénient d'explorer de nouveaux horizons");
+          errorMessage:
+              "Oups, quelque chose s'est mal passé lors de votre inscription : c'est l'inconvénient d'explorer de nouveaux horizons");
     }
   }
 
@@ -88,14 +93,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _submitButton(BuildContext context) {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     // UserProvider userProvider =
     //     Provider.of<UserProvider>(context, listen: false);
     return ElevatedButton(
       onPressed: () async {
         if (isLogin) {
-          await signInWithEmailAndPassword();
+          await signInWithEmailAndPassword(userProvider);
         } else {
-          await createUserWithEmailAndPassword();
+          await createUserWithEmailAndPassword(userProvider);
         }
       },
       style: ElevatedButton.styleFrom(
