@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_app/controller/firebase_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:my_app/controller/globale.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({Key? key, required this.chatId, required this.recipientName})
@@ -37,6 +38,7 @@ class _ChatViewState extends State<ChatView> {
 
                 final messages = snapshot.data!.docs;
 
+
                 return ListView.builder(
                   reverse: true,
                   itemCount: messages.length,
@@ -45,22 +47,25 @@ class _ChatViewState extends State<ChatView> {
                         messages[index].data() as Map<String, dynamic>;
                     final currentUserUid = firebaseManager.currentUser!.uid;
                     final isCurrentUser = message['senderId'] == currentUserUid;
-                      return Container(
-                      alignment: isCurrentUser
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      margin:
-                          const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                      child: Container(
-                        constraints: const BoxConstraints(
+                    return Container(
+                        alignment: isCurrentUser
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 20),
+                        child: Container(
+                          constraints: const BoxConstraints(
                             maxWidth: 220, // largeur maximale
                           ),
-                        padding: const EdgeInsets.symmetric(vertical: 12,horizontal:16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: isCurrentUser ? Colors.blue : Color.fromARGB(255, 211, 211, 211),
-                        ),
-                        child: Column(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: isCurrentUser
+                                ? Colors.blue
+                                : Color.fromARGB(255, 211, 211, 211),
+                          ),
+                          child: Column(
                             crossAxisAlignment: isCurrentUser
                                 ? CrossAxisAlignment.end
                                 : CrossAxisAlignment.start,
@@ -76,12 +81,13 @@ class _ChatViewState extends State<ChatView> {
                               const SizedBox(height: 5),
                               Text(
                                 timestampToHumanReadable(message['timestamp']),
-                                style: const TextStyle(fontSize: 10, color:  Color.fromARGB(255, 93, 93, 93)),
+                                style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Color.fromARGB(255, 93, 93, 93)),
                               ),
                             ],
                           ),
-                      ) 
-                    );
+                        ));
                   },
                 );
               },
@@ -94,18 +100,11 @@ class _ChatViewState extends State<ChatView> {
     );
   }
 
-  String timestampToHumanReadable(int timestamp) {
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    var formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
-    return formatter.format(dateTime);
-  }
-
-
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).primaryColor),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.fromLTRB(8, 10, 8, 30),
         child: Row(
           children: [
             Flexible(

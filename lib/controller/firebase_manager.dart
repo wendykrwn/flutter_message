@@ -49,7 +49,7 @@ class FirebaseManager {
   }
 
   //creer un utilisateur
-Future<Utilisateur> inscription(String email, String password) async {
+  Future<Utilisateur> inscription(String email, String password) async {
     try {
       UserCredential authResult = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -64,15 +64,13 @@ Future<Utilisateur> inscription(String email, String password) async {
         return user;
       }
     } catch (e) {
-        return Future.error(e);
-      }
+      return Future.error(e);
+    }
   }
-
 
   Future<void> signOut() async {
     await auth.signOut();
   }
-  
 
   // mise à jour d'un utlisateur
   updateUser(String uid, Map<String, dynamic> map) {
@@ -99,45 +97,52 @@ Future<Utilisateur> inscription(String email, String password) async {
     return chatDocRef.id;
   }
 
-
-  Future<String?> getChatId(String user1Id, String user2Id) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('CHAT_LIST')
-        .where('UTILISATEURS', arrayContainsAny: [user1Id, user2Id]).get();
-
-    if (snapshot.docs.isNotEmpty) {
-      return snapshot.docs.first.id;
-    } else {
-      // Pas de conversation existante pour ces deux utilisateurs
-      return null;
-    }
-  }
-
-
   // Ajouter un message dans une conversation
-
   Future<void> addMessage(String chatId, String text, String senderId) async {
+    final Timestamp timestamp = Timestamp.now();
     final DocumentReference messagesDocRef =
         cloudChats.doc(chatId).collection('MESSAGES').doc();
+
     final Map<String, dynamic> messageData = {
       'text': text,
       'senderId': senderId,
-      'timestamp': Timestamp.now().millisecondsSinceEpoch,
+      'timestamp': timestamp,
     };
+
     await messagesDocRef.set(messageData);
+
+    await cloudChats.doc(chatId).update({
+      'lastMessageText': text,
+      'lastMessageSenderId': senderId,
+      'lastMessageTimestamp': timestamp,
+    });
   }
 
+  // Future<void> addMessage(String chatId, String text, String senderId) async {
+  //   final DocumentReference messagesDocRef =
+  //       cloudChats.doc(chatId).collection('MESSAGES').doc();
+  //   final Map<String, dynamic> messageData = {
+  //     'text': text,
+  //     'senderId': senderId,
+  //     'timestamp': Timestamp.now().millisecondsSinceEpoch,
+  //   };
+  //   await messagesDocRef.set(messageData);
+  // }
 
   //Recuperes une liste de conversation de l'utilisateur actuel
   Stream<QuerySnapshot> getChats() {
     if (currentUser?.uid == null) {
       return const Stream.empty();
-    }
-    else{
-      return cloudChats
-          .where('user1Id', isEqualTo: currentUser?.uid)
-          .orderBy('lastMessageTimestamp', descending: true)
+    } else {
+      Stream<QuerySnapshot> query1 = cloudChats
+          .where(Filter.or(
+            Filter('user1Id', isEqualTo: currentUser?.uid),
+            Filter('user2Id', isEqualTo: currentUser?.uid),
+          ))
+          // .orderBy('lastMessageTimestamp', descending: true)
           .snapshots();
+
+      return query1;
     }
   }
 
@@ -149,7 +154,4 @@ Future<Utilisateur> inscription(String email, String password) async {
         .orderBy('timestamp', descending: true)
         .snapshots();
   }
-
-
-
 }
